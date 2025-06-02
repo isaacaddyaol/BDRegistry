@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { 
   Baby, 
+  Cross,
   FileText, 
   Shield, 
   Clock, 
@@ -20,7 +21,8 @@ import {
   QrCode,
   ArrowRight,
   AlertCircle,
-  IdCard
+  IdCard,
+  Search
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
