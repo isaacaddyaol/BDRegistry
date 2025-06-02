@@ -23,7 +23,7 @@
   --destructive-foreground: 60 9.1% 97.8%;
   --ring: 20 14.3% 4.1%;
   --radius: 0.5rem;
-  
+
   /* Government theme colors */
   --gov-blue: 207 90% 38%; /* #1565C0 */
   --gov-green: 122 39% 49%; /* #2E7D32 */
@@ -71,64 +71,64 @@
   .text-gov-blue {
     color: hsl(var(--gov-blue));
   }
-  
+
   .text-gov-green {
     color: hsl(var(--gov-green));
   }
-  
+
   .text-gov-orange {
     color: hsl(var(--gov-orange));
   }
-  
+
   .text-gov-gray {
     color: hsl(var(--gov-gray));
   }
-  
+
   .bg-gov-blue {
     background-color: hsl(var(--gov-blue));
   }
-  
+
   .bg-gov-green {
     background-color: hsl(var(--gov-green));
   }
-  
+
   .bg-gov-orange {
     background-color: hsl(var(--gov-orange));
   }
-  
+
   .bg-gov-gray {
     background-color: hsl(var(--gov-gray));
   }
-  
+
   .bg-gov-light {
     background-color: hsl(var(--gov-light));
   }
-  
+
   .border-gov-blue {
     border-color: hsl(var(--gov-blue));
   }
-  
+
   .hover\:bg-blue-700:hover {
     background-color: hsl(207 90% 32%);
   }
-  
+
   .hover\:bg-green-700:hover {
     background-color: hsl(122 39% 39%);
   }
-  
+
   .hover\:text-blue-700:hover {
     color: hsl(207 90% 32%);
   }
-  
+
   .hover\:text-green-700:hover {
     color: hsl(122 39% 39%);
   }
-  
+
   .hero-gradient {
     background: linear-gradient(135deg, hsl(var(--gov-blue)) 0%, hsl(207 90% 32%) 50%, hsl(214 100% 25%) 100%);
     position: relative;
   }
-  
+
   .hero-gradient::before {
     content: '';
     position: absolute;
@@ -139,16 +139,16 @@
     background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
     border-radius: inherit;
   }
-  
+
   .hero-text-shadow {
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
   }
-  
+
   .registration-card {
     position: relative;
     overflow: hidden;
   }
-  
+
   .registration-card::before {
     content: '';
     position: absolute;
@@ -156,16 +156,24 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-    animation: rotate 10s linear infinite;
+    background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.15), transparent);
+    animation: rotate 15s linear infinite;
     z-index: -1;
   }
-  
+
+  .registration-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    z-index: -1;
+  }
+
   .registration-option-birth {
     position: relative;
     cursor: pointer;
   }
-  
+
   .registration-option-birth::before {
     content: '';
     position: absolute;
@@ -177,16 +185,16 @@
     transition: left 0.5s;
     z-index: 1;
   }
-  
+
   .registration-option-birth:hover::before {
     left: 100%;
   }
-  
+
   .registration-option-death {
     position: relative;
     cursor: pointer;
   }
-  
+
   .registration-option-death::before {
     content: '';
     position: absolute;
@@ -198,11 +206,11 @@
     transition: left 0.5s;
     z-index: 1;
   }
-  
+
   .registration-option-death:hover::before {
     left: 100%;
   }
-  
+
   @keyframes rotate {
     from {
       transform: rotate(0deg);

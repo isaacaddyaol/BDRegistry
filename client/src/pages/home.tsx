@@ -179,17 +179,19 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Registration Actions */}
           <div className="lg:col-span-2">
-            <Card className="registration-card shadow-xl border-0 bg-gradient-to-br from-white to-blue-50">
-              <CardHeader className="border-b border-blue-100 bg-gradient-to-r from-gov-blue to-blue-600 text-white rounded-t-lg">
-                <CardTitle className="flex items-center space-x-3 text-xl">
-                  <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                    <FileText size={24} />
+            <Card className="registration-card shadow-2xl border-2 border-blue-200 bg-gradient-to-br from-white via-blue-50 to-white">
+              <CardHeader className="border-b-2 border-blue-200 bg-gradient-to-r from-gov-blue via-blue-600 to-blue-700 text-white rounded-t-lg">
+                <CardTitle className="flex items-center space-x-4 text-2xl">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                    <FileText size={28} />
                   </div>
-                  <span className="font-bold">Start New Registration</span>
+                  <div>
+                    <span className="font-bold text-white">Start New Registration</span>
+                    <p className="text-blue-100 text-base font-medium mt-1">Choose the type of registration you need to complete</p>
+                  </div>
                 </CardTitle>
-                <p className="text-blue-100 text-sm mt-2">Choose the type of registration you need to complete</p>
               </CardHeader>
-              <CardContent className="p-8 space-y-6">
+              <CardContent className="p-10 space-y-8 bg-gradient-to-br from-slate-50 to-white">
                 <Link href="/register/birth">
                   <div className="registration-option-birth group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                     <div className="absolute inset-0 bg-gradient-to-r from-gov-blue via-blue-600 to-blue-700"></div>
