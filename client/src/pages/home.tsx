@@ -84,26 +84,26 @@ export default function Home() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-gov-blue to-blue-600 rounded-lg p-8 mb-8 text-white">
-          <div className="max-w-4xl">
-            <h1 className="text-3xl font-bold mb-2">
-              {getGreeting()}, {user?.firstName || "User"}
+        <div className="hero-gradient rounded-2xl p-12 mb-8 text-white shadow-2xl border border-blue-400/20">
+          <div className="max-w-5xl">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4 hero-text-shadow leading-tight">
+              {getGreeting()}, <span className="text-blue-200">{user?.firstName || "User"}</span>
             </h1>
-            <p className="text-blue-100 text-lg mb-6">
+            <p className="text-blue-50 text-2xl mb-8 font-medium leading-relaxed">
               Welcome to Ghana's digital registry system. Manage vital records with confidence and security.
             </p>
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center space-x-2">
-                <Shield size={20} className="text-blue-200" />
-                <span className="text-sm">Secure & Verified</span>
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-full px-5 py-3 border border-white/20">
+                <Shield size={24} className="text-blue-200" />
+                <span className="text-lg font-semibold">Secure & Verified</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Clock size={20} className="text-blue-200" />
-                <span className="text-sm">24/7 Available</span>
+              <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-full px-5 py-3 border border-white/20">
+                <Clock size={24} className="text-blue-200" />
+                <span className="text-lg font-semibold">24/7 Available</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle2 size={20} className="text-blue-200" />
-                <span className="text-sm">Government Approved</span>
+              <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-full px-5 py-3 border border-white/20">
+                <CheckCircle2 size={24} className="text-blue-200" />
+                <span className="text-lg font-semibold">Government Approved</span>
               </div>
             </div>
           </div>
