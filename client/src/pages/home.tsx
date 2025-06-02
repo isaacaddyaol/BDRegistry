@@ -179,8 +179,8 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Registration Actions */}
           <div className="lg:col-span-2">
-            <Card className="registration-card shadow-2xl border-2 border-blue-200 bg-gradient-to-br from-white via-blue-50 to-white">
-              <CardHeader className="border-b-2 border-blue-200 bg-gradient-to-r from-gov-blue via-blue-600 to-blue-700 text-white rounded-t-lg">
+            <Card className="registration-card shadow-2xl border-2 border-slate-200 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900">
+              <CardHeader className="border-b-2 border-slate-600 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 text-white rounded-t-lg">
                 <CardTitle className="flex items-center space-x-4 text-2xl">
                   <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
                     <FileText size={28} />
@@ -191,7 +191,7 @@ export default function Home() {
                   </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-10 space-y-8 bg-gradient-to-br from-slate-50 to-white">
+              <CardContent className="p-10 space-y-8 bg-gradient-to-br from-slate-700 to-slate-800">
                 <Link href="/register/birth">
                   <div className="registration-option-birth group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                     <div className="absolute inset-0 bg-gradient-to-r from-gov-blue via-blue-600 to-blue-700"></div>
