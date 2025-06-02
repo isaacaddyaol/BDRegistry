@@ -179,52 +179,77 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           {/* Registration Actions */}
           <div className="lg:col-span-2">
-            <Card>
-              <CardHeader className="border-b border-gray-200">
-                <CardTitle className="flex items-center space-x-2">
-                  <FileText className="text-gov-blue" size={20} />
-                  <span>Start New Registration</span>
+            <Card className="registration-card shadow-xl border-0 bg-gradient-to-br from-white to-blue-50">
+              <CardHeader className="border-b border-blue-100 bg-gradient-to-r from-gov-blue to-blue-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center space-x-3 text-xl">
+                  <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                    <FileText size={24} />
+                  </div>
+                  <span className="font-bold">Start New Registration</span>
                 </CardTitle>
+                <p className="text-blue-100 text-sm mt-2">Choose the type of registration you need to complete</p>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-8 space-y-6">
                 <Link href="/register/birth">
-                  <Button className="w-full bg-gov-blue hover:bg-blue-700 text-white h-auto p-6 justify-between group">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                        <Baby size={24} />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-semibold text-lg">Birth Registration</div>
-                        <div className="text-sm opacity-90">
-                          Register a new birth and obtain official certificate
+                  <div className="registration-option-birth group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-r from-gov-blue via-blue-600 to-blue-700"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-white/10 group-hover:from-white/5 group-hover:via-white/10 group-hover:to-white/15 transition-all duration-300"></div>
+                    <div className="relative p-8 text-white">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-6">
+                          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <Baby size={32} className="text-white" />
+                          </div>
+                          <div className="text-left">
+                            <div className="font-bold text-2xl mb-2 group-hover:text-blue-100 transition-colors">Birth Registration</div>
+                            <div className="text-blue-100 text-lg mb-3 font-medium">
+                              Register a new birth and obtain official certificate
+                            </div>
+                            <div className="flex items-center space-x-4 text-sm">
+                              <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30">
+                                <span className="font-semibold">Required: Medical certificate, Parent IDs</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-xs opacity-75 mt-1">
-                          Required: Medical certificate, Parent IDs
+                        <div className="flex flex-col items-center space-y-2">
+                          <ArrowRight size={28} className="group-hover:translate-x-2 transition-transform duration-300" />
+                          <span className="text-xs opacity-80">Get Started</span>
                         </div>
                       </div>
                     </div>
-                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  </div>
                 </Link>
 
                 <Link href="/register/death">
-                  <Button className="w-full bg-gov-gray hover:bg-gray-700 text-white h-auto p-6 justify-between group">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                        <Cross size={24} />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-semibold text-lg">Death Registration</div>
-                        <div className="text-sm opacity-90">
-                          Register a death and obtain official certificate
+                  <div className="registration-option-death group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-800"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-white/10 group-hover:from-white/5 group-hover:via-white/10 group-hover:to-white/15 transition-all duration-300"></div>
+                    <div className="relative p-8 text-white">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-6">
+                          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <Cross size={32} className="text-white" />
+                          </div>
+                          <div className="text-left">
+                            <div className="font-bold text-2xl mb-2 group-hover:text-slate-100 transition-colors">Death Registration</div>
+                            <div className="text-slate-100 text-lg mb-3 font-medium">
+                              Register a death and obtain official certificate
+                            </div>
+                            <div className="flex items-center space-x-4 text-sm">
+                              <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30">
+                                <span className="font-semibold">Required: Medical certificate, Next of kin details</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-xs opacity-75 mt-1">
-                          Required: Medical certificate, Next of kin details
+                        <div className="flex flex-col items-center space-y-2">
+                          <ArrowRight size={28} className="group-hover:translate-x-2 transition-transform duration-300" />
+                          <span className="text-xs opacity-80">Get Started</span>
                         </div>
                       </div>
                     </div>
-                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  </div>
                 </Link>
               </CardContent>
             </Card>

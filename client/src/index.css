@@ -143,4 +143,72 @@
   .hero-text-shadow {
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
   }
+  
+  .registration-card {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .registration-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    animation: rotate 10s linear infinite;
+    z-index: -1;
+  }
+  
+  .registration-option-birth {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .registration-option-birth::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+    z-index: 1;
+  }
+  
+  .registration-option-birth:hover::before {
+    left: 100%;
+  }
+  
+  .registration-option-death {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .registration-option-death::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+    z-index: 1;
+  }
+  
+  .registration-option-death:hover::before {
+    left: 100%;
+  }
+  
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }
