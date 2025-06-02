@@ -1,3 +1,7 @@
+` tags.
+
+```
+<replit_final_file>
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -229,6 +233,62 @@
     }
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  /* Header specific styles */
+  .hero-gradient {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+  }
+
+  /* Enhanced header styles */
+  header {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+
+  /* Navigation improvements */
+  .nav-item {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .nav-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #1e40af);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  .nav-item:hover::before {
+    width: 100%;
+  }
+
+  /* Logo hover effects */
+  .logo-container {
+    transition: transform 0.2s ease;
+  }
+
+  .logo-container:hover {
+    transform: scale(1.02);
+  }
+
+  /* User menu enhancements */
+  .user-menu {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+  }
+
+  /* Mobile menu improvements */
+  @media (max-width: 1024px) {
+    .mobile-menu {
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.95);
     }
   }
 }
