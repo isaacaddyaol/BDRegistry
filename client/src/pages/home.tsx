@@ -12,17 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { 
   Baby, 
-  Cross, 
-  Search, 
-  QrCode, 
-  ArrowRight, 
   FileText, 
   Shield, 
   Clock, 
   CheckCircle2,
-  AlertCircle,
   Users,
-  TrendingUp
+  QrCode,
+  ArrowRight,
+  AlertCircle,
+  IdCard
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
@@ -81,7 +79,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gov-light">
       <Header />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-gov-blue to-blue-600 rounded-lg p-8 mb-8 text-white">
@@ -206,7 +204,7 @@ export default function Home() {
                     <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-                
+
                 <Link href="/register/death">
                   <Button className="w-full bg-gov-gray hover:bg-gray-700 text-white h-auto p-6 justify-between group">
                     <div className="flex items-center space-x-4">
@@ -259,7 +257,7 @@ export default function Home() {
                     </Button>
                   </div>
                 </div>
-                
+
                 <div className="text-center">
                   <div className="flex items-center justify-center space-x-4 mb-4">
                     <div className="h-px bg-gray-300 flex-1"></div>

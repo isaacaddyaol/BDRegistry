@@ -30,6 +30,7 @@
   --gov-orange: 36 100% 48%; /* #F57C00 */
   --gov-gray: 0 0% 38%; /* #616161 */
   --gov-light: 0 0% 98%; /* #FAFAFA */
+  --gov-blue-dark: 207 90% 32%; /* Darker blue for better contrast */
 }
 
 .dark {
@@ -121,5 +122,13 @@
   
   .hover\:text-green-700:hover {
     color: hsl(122 39% 39%);
+  }
+  
+  .hero-gradient {
+    background: linear-gradient(135deg, hsl(var(--gov-blue)) 0%, hsl(207 90% 32%) 100%);
+  }
+  
+  .hero-text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
