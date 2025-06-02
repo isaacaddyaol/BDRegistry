@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { 
   Select,
   SelectContent,
@@ -18,8 +18,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { CloudUpload, X } from "lucide-react";
+import FileUpload from "@/components/ui/file-upload";
+import { X, CheckCircle } from "lucide-react";
 import { z } from "zod";
 import { insertBirthRegistrationSchema } from "@shared/schema";
 

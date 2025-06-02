@@ -307,7 +307,7 @@ export class DatabaseStorage implements IStorage {
         valid: true,
         type: 'Birth Certificate',
         applicationId: birthCert.applicationId,
-        issuedDate: birthCert.updatedAt || birthCert.createdAt,
+        issuedDate: birthCert.updatedAt ?? birthCert.createdAt ?? undefined,
         issuingOffice: 'Accra Registry',
       };
     }
@@ -323,7 +323,7 @@ export class DatabaseStorage implements IStorage {
         valid: true,
         type: 'Death Certificate',
         applicationId: deathCert.applicationId,
-        issuedDate: deathCert.updatedAt || deathCert.createdAt,
+        issuedDate: deathCert.updatedAt ?? deathCert.createdAt ?? undefined,
         issuingOffice: 'Accra Registry',
       };
     }

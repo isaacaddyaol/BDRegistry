@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -9,13 +9,28 @@ import RecentApplications from "@/components/dashboard/recent-applications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Baby, Cross, Search, QrCode, ArrowRight } from "lucide-react";
-import { Link } from "wouter";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Baby, 
+  Cross, 
+  Search, 
+  QrCode, 
+  ArrowRight, 
+  FileText, 
+  Shield, 
+  Clock, 
+  CheckCircle2,
+  AlertCircle,
+  Users,
+  TrendingUp
+} from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 export default function Home() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+  const [certificateNumber, setCertificateNumber] = useState("");
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -37,6 +52,14 @@ export default function Home() {
     retry: false,
   });
 
+  const handleQuickVerify = () => {
+    if (certificateNumber.trim()) {
+      setLocation(`/verify?cert=${encodeURIComponent(certificateNumber)}`);
+    } else {
+      setLocation("/verify");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gov-light flex items-center justify-center">
@@ -48,84 +71,225 @@ export default function Home() {
     );
   }
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  };
+
   return (
     <div className="min-h-screen bg-gov-light">
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <div className="bg-gradient-to-r from-gov-blue to-blue-600 rounded-lg p-8 mb-8 text-white">
+          <div className="max-w-4xl">
+            <h1 className="text-3xl font-bold mb-2">
+              {getGreeting()}, {user?.firstName || "User"}
+            </h1>
+            <p className="text-blue-100 text-lg mb-6">
+              Welcome to Ghana's digital registry system. Manage vital records with confidence and security.
+            </p>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center space-x-2">
+                <Shield size={20} className="text-blue-200" />
+                <span className="text-sm">Secure & Verified</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Clock size={20} className="text-blue-200" />
+                <span className="text-sm">24/7 Available</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 size={20} className="text-blue-200" />
+                <span className="text-sm">Government Approved</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Quick Stats */}
         <StatsCards stats={stats} />
 
-        {/* Main Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">
-                Register New Event
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Link href="/register/birth">
-                <Button className="w-full bg-gov-blue hover:bg-blue-700 text-white h-auto p-6 justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Baby size={24} />
-                    <div className="text-left">
-                      <div className="font-medium">Birth Registration</div>
-                      <div className="text-sm opacity-90">Register a new birth certificate</div>
-                    </div>
-                  </div>
-                  <ArrowRight size={20} />
-                </Button>
-              </Link>
-              
-              <Link href="/register/death">
-                <Button className="w-full bg-gov-gray hover:bg-gray-700 text-white h-auto p-6 justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Cross size={24} />
-                    <div className="text-left">
-                      <div className="font-medium">Death Registration</div>
-                      <div className="text-sm opacity-90">Register a death certificate</div>
-                    </div>
-                  </div>
-                  <ArrowRight size={20} />
-                </Button>
-              </Link>
+        {/* Service Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-gov-blue bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Baby className="text-gov-blue" size={32} />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Birth Registration</h3>
+              <p className="text-sm text-gov-gray mb-4">
+                Register newborns and obtain official birth certificates
+              </p>
+              <Badge variant="outline" className="text-xs">
+                Digital Process
+              </Badge>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">
-                Verify Certificate
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="certificateId" className="text-sm font-medium text-gray-700">
-                  Certificate ID
-                </Label>
-                <div className="flex space-x-2 mt-2">
-                  <Input 
-                    id="certificateId"
-                    placeholder="Enter certificate number" 
-                    className="flex-1"
-                  />
-                  <Link href="/verify">
-                    <Button className="bg-gov-green hover:bg-green-700 text-white">
-                      <Search size={16} />
-                    </Button>
-                  </Link>
-                </div>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Cross className="text-gray-600" size={32} />
               </div>
-              <div className="text-center">
-                <p className="text-sm text-gov-gray mb-4">Or scan QR code</p>
-                <Button variant="outline" className="text-gov-gray hover:bg-gray-50">
-                  <QrCode className="mr-2" size={16} />
-                  Scan QR Code
-                </Button>
-              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Death Registration</h3>
+              <p className="text-sm text-gov-gray mb-4">
+                Register deaths and obtain official death certificates
+              </p>
+              <Badge variant="outline" className="text-xs">
+                Required Documents
+              </Badge>
             </CardContent>
           </Card>
+
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-gov-green bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="text-gov-green" size={32} />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Certificate Verification</h3>
+              <p className="text-sm text-gov-gray mb-4">
+                Verify authenticity of issued certificates instantly
+              </p>
+              <Badge variant="outline" className="text-xs">
+                QR Code Support
+              </Badge>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-gov-orange bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FileText className="text-gov-orange" size={32} />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Document Management</h3>
+              <p className="text-sm text-gov-gray mb-4">
+                Secure storage and retrieval of all vital documents
+              </p>
+              <Badge variant="outline" className="text-xs">
+                Cloud Storage
+              </Badge>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Registration Actions */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader className="border-b border-gray-200">
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="text-gov-blue" size={20} />
+                  <span>Start New Registration</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <Link href="/register/birth">
+                  <Button className="w-full bg-gov-blue hover:bg-blue-700 text-white h-auto p-6 justify-between group">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                        <Baby size={24} />
+                      </div>
+                      <div className="text-left">
+                        <div className="font-semibold text-lg">Birth Registration</div>
+                        <div className="text-sm opacity-90">
+                          Register a new birth and obtain official certificate
+                        </div>
+                        <div className="text-xs opacity-75 mt-1">
+                          Required: Medical certificate, Parent IDs
+                        </div>
+                      </div>
+                    </div>
+                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                
+                <Link href="/register/death">
+                  <Button className="w-full bg-gov-gray hover:bg-gray-700 text-white h-auto p-6 justify-between group">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                        <Cross size={24} />
+                      </div>
+                      <div className="text-left">
+                        <div className="font-semibold text-lg">Death Registration</div>
+                        <div className="text-sm opacity-90">
+                          Register a death and obtain official certificate
+                        </div>
+                        <div className="text-xs opacity-75 mt-1">
+                          Required: Medical certificate, Next of kin details
+                        </div>
+                      </div>
+                    </div>
+                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick Verification */}
+          <div>
+            <Card>
+              <CardHeader className="border-b border-gray-200">
+                <CardTitle className="flex items-center space-x-2">
+                  <Shield className="text-gov-green" size={20} />
+                  <span>Quick Verification</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Certificate Number
+                  </label>
+                  <div className="flex space-x-2">
+                    <Input 
+                      value={certificateNumber}
+                      onChange={(e) => setCertificateNumber(e.target.value)}
+                      placeholder="BC123456789" 
+                      className="flex-1"
+                    />
+                    <Button 
+                      onClick={handleQuickVerify}
+                      className="bg-gov-green hover:bg-green-700 text-white"
+                    >
+                      <Search size={16} />
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <div className="flex items-center justify-center space-x-4 mb-4">
+                    <div className="h-px bg-gray-300 flex-1"></div>
+                    <span className="text-sm text-gov-gray">OR</span>
+                    <div className="h-px bg-gray-300 flex-1"></div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full text-gov-blue border-gov-blue hover:bg-blue-50"
+                    onClick={() => setLocation("/verify")}
+                  >
+                    <QrCode className="mr-2" size={16} />
+                    Advanced Verification
+                  </Button>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start space-x-2">
+                    <AlertCircle className="text-blue-600 mt-0.5" size={16} />
+                    <div>
+                      <p className="text-sm font-medium text-blue-900">Verification Tips</p>
+                      <p className="text-xs text-blue-800 mt-1">
+                        Enter the complete certificate number as shown on your document for instant verification.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Recent Applications */}

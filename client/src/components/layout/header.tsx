@@ -44,7 +44,7 @@ export default function Header() {
           
           <nav className="hidden md:flex items-center space-x-8">
             <Link href="/">
-              <a className={getNavLinkClass("/")}>Dashboard</a>
+              <span className={getNavLinkClass("/")}>Dashboard</span>
             </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -55,19 +55,19 @@ export default function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
-                  <Link href="/register/birth">Birth IdCard</Link>
+                  <Link href="/register/birth">Birth Certificate</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/register/death">Death IdCard</Link>
+                  <Link href="/register/death">Death Certificate</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <Link href="/verify">
-              <a className={getNavLinkClass("/verify")}>Verify</a>
+              <span className={getNavLinkClass("/verify")}>Verify</span>
             </Link>
             {(user?.role === 'admin' || user?.role === 'registrar') && (
               <Link href="/admin">
-                <a className={getNavLinkClass("/admin")}>Admin</a>
+                <span className={getNavLinkClass("/admin")}>Admin</span>
               </Link>
             )}
           </nav>
