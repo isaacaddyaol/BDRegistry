@@ -10,21 +10,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Baby, 
-  Cross,
-  FileText, 
-  Shield, 
-  Clock, 
-  CheckCircle2,
+import { useLocation } from "wouter";
+import { Baby, Shield, Clock, CheckCircle, Cross, IdCard } from "lucide-react";
+import {
+  FileText,
   Users,
   QrCode,
   ArrowRight,
   AlertCircle,
-  IdCard,
   Search
 } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 
 export default function Home() {
   const { toast } = useToast();
@@ -102,7 +98,7 @@ export default function Home() {
                 <span className="text-lg font-semibold">24/7 Available</span>
               </div>
               <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-full px-5 py-3 border border-white/20">
-                <CheckCircle2 size={24} className="text-blue-200" />
+                <CheckCircle size={24} className="text-blue-200" />
                 <span className="text-lg font-semibold">Government Approved</span>
               </div>
             </div>
@@ -272,13 +268,13 @@ export default function Home() {
                     Certificate Number
                   </label>
                   <div className="flex space-x-2">
-                    <Input 
+                    <Input
                       value={certificateNumber}
                       onChange={(e) => setCertificateNumber(e.target.value)}
-                      placeholder="BC123456789" 
+                      placeholder="BC123456789"
                       className="flex-1"
                     />
-                    <Button 
+                    <Button
                       onClick={handleQuickVerify}
                       className="bg-gov-green hover:bg-green-700 text-white"
                     >
@@ -293,8 +289,8 @@ export default function Home() {
                     <span className="text-sm text-gov-gray">OR</span>
                     <div className="h-px bg-gray-300 flex-1"></div>
                   </div>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full text-gov-blue border-gov-blue hover:bg-blue-50"
                     onClick={() => setLocation("/verify")}
                   >

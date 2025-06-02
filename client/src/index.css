@@ -211,6 +211,18 @@
     left: 100%;
   }
 
+  .gov-red {
+    @apply text-red-600;
+  }
+
+  .bg-gov-red {
+    @apply bg-red-600;
+  }
+
+  .hover:bg-red-700:hover {
+    @apply bg-red-700;
+  }
+
   @keyframes rotate {
     from {
       transform: rotate(0deg);
