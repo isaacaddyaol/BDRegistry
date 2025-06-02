@@ -79,10 +79,10 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gov-light">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Welcome Section */}
         <div className="hero-gradient rounded-2xl p-12 mb-8 text-white shadow-2xl border border-blue-400/20">
           <div className="max-w-5xl">
@@ -113,8 +113,8 @@ export default function Home() {
         <StatsCards stats={stats} />
 
         {/* Service Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <Card className="hover:shadow-lg transition-shadow duration-300 bg-white/80 backdrop-blur-sm border border-slate-200/50">
             <CardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-gov-blue bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Baby className="text-gov-blue" size={32} />
@@ -129,7 +129,7 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-lg transition-shadow duration-300 bg-white/80 backdrop-blur-sm border border-slate-200/50">
             <CardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Cross className="text-gray-600" size={32} />
@@ -144,7 +144,7 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-lg transition-shadow duration-300 bg-white/80 backdrop-blur-sm border border-slate-200/50">
             <CardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-gov-green bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="text-gov-green" size={32} />
@@ -159,7 +159,7 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-lg transition-shadow duration-300 bg-white/80 backdrop-blur-sm border border-slate-200/50">
             <CardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-gov-orange bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FileText className="text-gov-orange" size={32} />
@@ -176,7 +176,7 @@ export default function Home() {
         </div>
 
         {/* Main Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Registration Actions */}
           <div className="lg:col-span-2">
             <Card className="registration-card shadow-xl border-0 bg-gradient-to-br from-white to-blue-50">
@@ -257,7 +257,7 @@ export default function Home() {
 
           {/* Quick Verification */}
           <div>
-            <Card>
+            <Card className="bg-white/80 backdrop-blur-sm border border-slate-200/50">
               <CardHeader className="border-b border-gray-200">
                 <CardTitle className="flex items-center space-x-2">
                   <Shield className="text-gov-green" size={20} />
