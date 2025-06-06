@@ -14,49 +14,52 @@ import {
   Clock 
 } from "lucide-react";
 
+interface Stats {
+  pendingApplications: number;
+  thisMonthRegistrations: number;
+  totalBirths: number;
+  totalDeaths: number;
+}
+
+interface Application {
+  id: number;
+  type: 'birth' | 'death';
+  applicationId: string;
+  status: string;
+  createdAt: string;
+}
+
 export default function AdminDashboard() {
   const { toast } = useToast();
-  const { user, isAuthenticated, isLoading } = useAuth();
 
-  // Redirect to home if not authenticated or not admin/registrar
-  useEffect(() => {
-    if (!isLoading && (!isAuthenticated || (user?.role !== 'admin' && user?.role !== 'registrar'))) {
-      toast({
-        title: "Unauthorized",
-        description: "You don't have permission to access this page.",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, user, toast]);
-
-  const { data: stats } = useQuery({
+  const { data: stats, error: statsError } = useQuery<Stats>({
     queryKey: ["/api/statistics"],
     retry: false,
   });
 
-  const { data: pendingApps } = useQuery({
+  const { data: pendingApps, error: pendingError } = useQuery<Application[]>({
     queryKey: ["/api/pending-applications"],
     retry: false,
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gov-light flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gov-blue mx-auto mb-4"></div>
-          <p className="text-gov-gray">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated || (user?.role !== 'admin' && user?.role !== 'registrar')) {
-    return null;
-  }
+  useEffect(() => {
+    if (statsError) {
+      console.error('Stats error:', statsError);
+      toast({
+        title: "Error",
+        description: "Failed to load statistics. Please try again.",
+        variant: "destructive",
+      });
+    }
+    if (pendingError) {
+      console.error('Pending apps error:', pendingError);
+      toast({
+        title: "Error",
+        description: "Failed to load pending applications. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [statsError, pendingError, toast]);
 
   return (
     <div className="min-h-screen bg-gov-light">

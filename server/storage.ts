@@ -11,11 +11,24 @@ import {
   type DeathRegistration,
   type InsertDocument,
   type Document,
+  type RegisterUser,
+  type LoginUser,
+  type RequestPasswordReset,
+  type ResetPassword,
+  type VerifyEmail,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, count, and } from "drizzle-orm";
+import { eq, desc, count, and, isNull, gt } from "drizzle-orm";
+import { hashPassword, verifyPassword } from "./utils/password";
+import { randomUUID } from "crypto";
+import { sendVerificationEmail, sendPasswordResetEmail } from "./services/email";
 
 export interface IStorage {
+  // User authentication operations
+  registerUser(userData: RegisterUser): Promise<User>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  validateUserCredentials(credentials: LoginUser): Promise<User | undefined>;
+  
   // User operations - required for Replit Auth
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
@@ -56,9 +69,63 @@ export interface IStorage {
     issuedDate?: Date;
     issuingOffice?: string;
   }>;
+  
+  // Email verification
+  verifyEmail(token: string): Promise<boolean>;
+  resendVerificationEmail(email: string): Promise<void>;
+  
+  // Password reset
+  requestPasswordReset(email: string): Promise<void>;
+  resetPassword(data: ResetPassword): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
+  // User authentication operations
+  async registerUser(userData: RegisterUser): Promise<User> {
+    const hashedPassword = await hashPassword(userData.password);
+    const verificationToken = randomUUID();
+    const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    
+    const [user] = await db
+      .insert(users)
+      .values({
+        id: randomUUID(),
+        email: userData.email,
+        password: hashedPassword,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: userData.role,
+        verificationToken,
+        verificationTokenExpiry,
+      })
+      .returning();
+    
+    // Send verification email
+    await sendVerificationEmail(user.email, verificationToken);
+    
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
+    return user;
+  }
+
+  async validateUserCredentials(credentials: LoginUser): Promise<User | undefined> {
+    const user = await this.getUserByEmail(credentials.email);
+    
+    if (!user) {
+      return undefined;
+    }
+    
+    const isValid = await verifyPassword(credentials.password, user.password);
+    
+    return isValid ? user : undefined;
+  }
+
   // User operations - required for Replit Auth
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -329,6 +396,108 @@ export class DatabaseStorage implements IStorage {
     }
 
     return { valid: false };
+  }
+
+  async verifyEmail(token: string): Promise<boolean> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(
+        and(
+          eq(users.verificationToken, token),
+          gt(users.verificationTokenExpiry!, new Date())
+        )
+      );
+
+    if (!user) {
+      return false;
+    }
+
+    await db
+      .update(users)
+      .set({
+        isVerified: true,
+        verificationToken: null,
+        verificationTokenExpiry: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, user.id));
+
+    return true;
+  }
+
+  async resendVerificationEmail(email: string): Promise<void> {
+    const user = await this.getUserByEmail(email);
+    
+    if (!user || user.isVerified) {
+      return;
+    }
+
+    const verificationToken = randomUUID();
+    const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await db
+      .update(users)
+      .set({
+        verificationToken,
+        verificationTokenExpiry,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, user.id));
+
+    await sendVerificationEmail(email, verificationToken);
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const user = await this.getUserByEmail(email);
+    
+    if (!user) {
+      return;
+    }
+
+    const resetToken = randomUUID();
+    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await db
+      .update(users)
+      .set({
+        resetToken,
+        resetTokenExpiry,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, user.id));
+
+    await sendPasswordResetEmail(email, resetToken);
+  }
+
+  async resetPassword(data: ResetPassword): Promise<boolean> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(
+        and(
+          eq(users.resetToken, data.token),
+          gt(users.resetTokenExpiry!, new Date())
+        )
+      );
+
+    if (!user) {
+      return false;
+    }
+
+    const hashedPassword = await hashPassword(data.password);
+
+    await db
+      .update(users)
+      .set({
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, user.id));
+
+    return true;
   }
 }
 

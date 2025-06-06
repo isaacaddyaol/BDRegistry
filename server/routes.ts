@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./localAuth";
 import { insertBirthRegistrationSchema, insertDeathRegistrationSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
@@ -34,21 +34,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
+  app.get('/api/auth/user', isAuthenticated, (req: any, res) => {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
+    res.json({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role
+    });
   });
 
   // Birth registration routes
   app.post('/api/birth-registrations', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const validatedData = insertBirthRegistrationSchema.parse({
         ...req.body,
         submittedBy: userId,
@@ -68,15 +71,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/birth-registrations', isAuthenticated, async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = req.user;
       let registrations;
       
       if (user?.role === 'admin' || user?.role === 'registrar') {
         registrations = await storage.getAllBirthRegistrations();
       } else {
-        // For regular users, only return their own registrations
         registrations = await storage.getAllBirthRegistrations();
-        registrations = registrations.filter(reg => reg.submittedBy === req.user.claims.sub);
+        registrations = registrations.filter(reg => reg.submittedBy === user.id);
       }
       
       res.json(registrations);
@@ -104,7 +106,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch('/api/birth-registrations/:id/status', isAuthenticated, async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = req.user;
       
       if (user?.role !== 'admin' && user?.role !== 'registrar') {
         return res.status(403).json({ message: "Insufficient permissions" });
@@ -124,7 +126,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updated = await storage.updateBirthRegistrationStatus(
         id,
         status,
-        req.user.claims.sub,
+        user.id,
         reviewNotes,
         certificateNumber
       );
@@ -139,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Death registration routes
   app.post('/api/death-registrations', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const validatedData = insertDeathRegistrationSchema.parse({
         ...req.body,
         submittedBy: userId,
@@ -159,14 +161,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/death-registrations', isAuthenticated, async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = req.user;
       let registrations;
       
       if (user?.role === 'admin' || user?.role === 'registrar') {
         registrations = await storage.getAllDeathRegistrations();
       } else {
         registrations = await storage.getAllDeathRegistrations();
-        registrations = registrations.filter(reg => reg.submittedBy === req.user.claims.sub);
+        registrations = registrations.filter(reg => reg.submittedBy === user.id);
       }
       
       res.json(registrations);
@@ -178,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch('/api/death-registrations/:id/status', isAuthenticated, async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = req.user;
       
       if (user?.role !== 'admin' && user?.role !== 'registrar') {
         return res.status(403).json({ message: "Insufficient permissions" });
@@ -198,7 +200,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updated = await storage.updateDeathRegistrationStatus(
         id,
         status,
-        req.user.claims.sub,
+        user.id,
         reviewNotes,
         certificateNumber
       );
@@ -227,7 +229,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         filePath: req.file.path,
         fileSize: req.file.size,
         mimeType: req.file.mimetype,
-        uploadedBy: req.user.claims.sub,
+        uploadedBy: req.user.id,
       });
       
       res.json(document);
@@ -274,7 +276,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Pending applications for admin/registrar
   app.get('/api/pending-applications', isAuthenticated, async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = req.user;
       
       if (user?.role !== 'admin' && user?.role !== 'registrar') {
         return res.status(403).json({ message: "Insufficient permissions" });

@@ -1,10 +1,11 @@
--- Ghana Birth and Death Registration System Database Schema
--- This schema matches the Drizzle ORM definitions in shared/schema.ts
+-- Drop all existing tables
+DROP TABLE IF EXISTS documents CASCADE;
+DROP TABLE IF EXISTS birth_registrations CASCADE;
+DROP TABLE IF EXISTS death_registrations CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS sessions CASCADE;
 
--- Enable UUID extension (if needed)
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- Session storage table - required for Replit Auth
+-- Create sessions table
 CREATE TABLE sessions (
     sid VARCHAR PRIMARY KEY,
     sess JSONB NOT NULL,
@@ -14,7 +15,7 @@ CREATE TABLE sessions (
 -- Create index on expire column for session cleanup
 CREATE INDEX IDX_session_expire ON sessions(expire);
 
--- User storage table - required for Replit Auth
+-- Create users table
 CREATE TABLE users (
     id VARCHAR PRIMARY KEY NOT NULL,
     email VARCHAR UNIQUE NOT NULL,
@@ -22,7 +23,7 @@ CREATE TABLE users (
     first_name VARCHAR,
     last_name VARCHAR,
     profile_image_url VARCHAR,
-    role VARCHAR NOT NULL DEFAULT 'public', -- public, health_worker, registrar, admin
+    role VARCHAR NOT NULL DEFAULT 'public',
     is_verified BOOLEAN NOT NULL DEFAULT false,
     verification_token VARCHAR,
     verification_token_expiry TIMESTAMP,
@@ -32,14 +33,14 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Birth registrations table
+-- Create birth_registrations table
 CREATE TABLE birth_registrations (
     id SERIAL PRIMARY KEY,
-    application_id VARCHAR NOT NULL UNIQUE, -- BR2024001 format
+    application_id VARCHAR NOT NULL UNIQUE,
     
     -- Child information
     child_name VARCHAR NOT NULL,
-    child_sex VARCHAR NOT NULL, -- male, female
+    child_sex VARCHAR NOT NULL,
     date_of_birth DATE NOT NULL,
     time_of_birth VARCHAR,
     place_of_birth VARCHAR NOT NULL,
@@ -57,24 +58,20 @@ CREATE TABLE birth_registrations (
     mother_occupation VARCHAR,
     
     -- Application metadata
-    submitted_by VARCHAR NOT NULL,
-    status VARCHAR NOT NULL DEFAULT 'pending', -- pending, approved, rejected
-    reviewed_by VARCHAR,
+    submitted_by VARCHAR NOT NULL REFERENCES users(id),
+    status VARCHAR NOT NULL DEFAULT 'pending',
+    reviewed_by VARCHAR REFERENCES users(id),
     review_notes TEXT,
     certificate_number VARCHAR UNIQUE,
     
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    
-    -- Foreign key constraints
-    FOREIGN KEY (submitted_by) REFERENCES users(id),
-    FOREIGN KEY (reviewed_by) REFERENCES users(id)
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Death registrations table
+-- Create death_registrations table
 CREATE TABLE death_registrations (
     id SERIAL PRIMARY KEY,
-    application_id VARCHAR NOT NULL UNIQUE, -- DR2024001 format
+    application_id VARCHAR NOT NULL UNIQUE,
     
     -- Deceased information
     deceased_name VARCHAR NOT NULL,
@@ -90,38 +87,31 @@ CREATE TABLE death_registrations (
     next_of_kin_national_id VARCHAR,
     
     -- Application metadata
-    submitted_by VARCHAR NOT NULL,
-    status VARCHAR NOT NULL DEFAULT 'pending', -- pending, approved, rejected
-    reviewed_by VARCHAR,
+    submitted_by VARCHAR NOT NULL REFERENCES users(id),
+    status VARCHAR NOT NULL DEFAULT 'pending',
+    reviewed_by VARCHAR REFERENCES users(id),
     review_notes TEXT,
     certificate_number VARCHAR UNIQUE,
     
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    
-    -- Foreign key constraints
-    FOREIGN KEY (submitted_by) REFERENCES users(id),
-    FOREIGN KEY (reviewed_by) REFERENCES users(id)
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Document uploads table
+-- Create documents table
 CREATE TABLE documents (
     id SERIAL PRIMARY KEY,
     application_id VARCHAR NOT NULL,
-    application_type VARCHAR NOT NULL, -- birth, death
-    document_type VARCHAR NOT NULL, -- medical_certificate, parent_id, next_of_kin_id
+    application_type VARCHAR NOT NULL,
+    document_type VARCHAR NOT NULL,
     file_name VARCHAR NOT NULL,
     file_path VARCHAR NOT NULL,
     file_size INTEGER,
     mime_type VARCHAR,
-    uploaded_by VARCHAR NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    
-    -- Foreign key constraint
-    FOREIGN KEY (uploaded_by) REFERENCES users(id)
+    uploaded_by VARCHAR NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Indexes for better performance
+-- Create indexes for better performance
 CREATE INDEX idx_birth_registrations_application_id ON birth_registrations(application_id);
 CREATE INDEX idx_birth_registrations_status ON birth_registrations(status);
 CREATE INDEX idx_birth_registrations_submitted_by ON birth_registrations(submitted_by);
@@ -136,14 +126,32 @@ CREATE INDEX idx_documents_application_id ON documents(application_id);
 CREATE INDEX idx_documents_application_type ON documents(application_type);
 CREATE INDEX idx_documents_uploaded_by ON documents(uploaded_by);
 
--- Insert default admin user (optional)
--- INSERT INTO users (id, email, first_name, last_name, role) 
--- VALUES ('admin-001', 'admin@registry.gov.gh', 'System', 'Administrator', 'admin');
-
--- Insert users with different roles (passwords are hashed using bcrypt)
--- All passwords are 'Password123!' hashed with bcrypt
+-- Insert test users
 INSERT INTO users (id, email, password, first_name, last_name, role, is_verified) VALUES
-('user-001', 'public@example.com', '$2b$10$6jXzGkf.Z3qH.Ay9nS/O.uqbhG0QzZ0DMHjVB9xk7.BwgOQI8zqPi', 'John', 'Public', 'public', true),
-('user-002', 'health@example.com', '$2b$10$6jXzGkf.Z3qH.Ay9nS/O.uqbhG0QzZ0DMHjVB9xk7.BwgOQI8zqPi', 'Sarah', 'Health', 'health_worker', true),
-('user-003', 'registrar@example.com', '$2b$10$6jXzGkf.Z3qH.Ay9nS/O.uqbhG0QzZ0DMHjVB9xk7.BwgOQI8zqPi', 'Michael', 'Registrar', 'registrar', true),
-('user-004', 'admin@example.com', '$2b$10$6jXzGkf.Z3qH.Ay9nS/O.uqbhG0QzZ0DMHjVB9xk7.BwgOQI8zqPi', 'Alice', 'Admin', 'admin', true);
+('user-001', 'public@example.com', 'public123', 'John', 'Public', 'public', true),
+('user-002', 'health@example.com', 'health123', 'Sarah', 'Health', 'health_worker', true),
+('user-003', 'registrar@example.com', 'registrar123', 'Michael', 'Registrar', 'registrar', true),
+('user-004', 'admin@example.com', 'admin123', 'Alice', 'Admin', 'admin', true),
+('user-005', 'isaacaddyasare@gmail.com', 'Zavi1255@', 'isaac', 'addy', 'admin', true);
+
+-- Insert sample birth registration
+INSERT INTO birth_registrations (
+    application_id, child_name, child_sex, date_of_birth, place_of_birth,
+    father_name, father_national_id, mother_name, mother_national_id,
+    submitted_by, status
+) VALUES (
+    'BR2024001', 'Baby Smith', 'male', '2024-01-15', 'Korle Bu Teaching Hospital',
+    'John Smith', 'GHA-123456', 'Mary Smith', 'GHA-789012',
+    'user-002', 'pending'
+);
+
+-- Insert sample death registration
+INSERT INTO death_registrations (
+    application_id, deceased_name, date_of_death, place_of_death, cause_of_death,
+    next_of_kin_name, next_of_kin_relationship, next_of_kin_contact,
+    submitted_by, status
+) VALUES (
+    'DR2024001', 'James Brown', '2024-01-20', 'Ridge Hospital', 'Natural causes',
+    'Sarah Brown', 'Daughter', '+233201234567',
+    'user-002', 'pending'
+); 

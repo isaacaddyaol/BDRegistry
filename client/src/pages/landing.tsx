@@ -1,8 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IdCard, Shield, Users, FileCheck } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Landing() {
+  const [, setLocation] = useLocation();
+
+  const handleSignIn = () => {
+    setLocation("/signin");
+  };
+
   return (
     <div className="min-h-screen bg-gov-light">
       {/* Header */}
@@ -20,7 +27,7 @@ export default function Landing() {
             </div>
             
             <Button 
-              onClick={() => window.location.href = "/api/login"}
+              onClick={handleSignIn}
               className="bg-gov-blue hover:bg-blue-700 text-white"
             >
               Sign In
@@ -41,7 +48,7 @@ export default function Landing() {
             and ensuring accurate record-keeping for all Ghanaians.
           </p>
           <Button 
-            onClick={() => window.location.href = "/api/login"}
+            onClick={handleSignIn}
             size="lg"
             className="bg-gov-blue hover:bg-blue-700 text-white px-8 py-4"
           >
