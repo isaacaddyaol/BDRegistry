@@ -28,20 +28,24 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const [certificateNumber, setCertificateNumber] = useState("");
 
-  // Redirect to home if not authenticated
+  // Allow specific public emails without authentication
+  const publicEmails = [
+    'public@registry.gov.gh',
+    'health@registry.gov.gh',
+    'registrar@registry.gov.gh'
+  ];
+
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
+    if (!isLoading) {
+      if (!isAuthenticated && (!user?.email || !publicEmails.includes(user.email))) {
+        // Redirect to login if not authenticated and not a public email
+        setLocation("/homepage");
+        return;
+      }
+      // At this point user is either authenticated or has a public email
+      // They can stay on the home page
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [isAuthenticated, isLoading, setLocation, user?.email]);
 
   const { data: stats } = useQuery({
     queryKey: ["/api/statistics"],

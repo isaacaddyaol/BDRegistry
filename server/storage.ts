@@ -86,6 +86,9 @@ export class DatabaseStorage implements IStorage {
     const verificationToken = randomUUID();
     const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     
+    // Set isVerified to true for admin registrations during setup
+    const isAdmin = userData.role === 'admin';
+    
     const [user] = await db
       .insert(users)
       .values({
@@ -97,6 +100,7 @@ export class DatabaseStorage implements IStorage {
         role: userData.role,
         verificationToken,
         verificationTokenExpiry,
+        isVerified: isAdmin, // Auto-verify admin accounts
       })
       .returning();
     

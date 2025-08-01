@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IdCard, Bell, ChevronDown, Menu, X, FileText, Shield, User, Settings, LogOut } from "lucide-react";
 
 export default function Header() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [location] = useLocation();
 
   const isActive = (path: string) => {
@@ -26,6 +26,33 @@ export default function Header() {
       ? "text-gov-blue font-semibold border-b-2 border-gov-blue pb-1 px-3 py-2 rounded-t-lg bg-blue-50"
       : "text-gray-700 hover:text-gov-blue hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-lg font-medium";
   };
+
+  const userMenu = [
+    ...(user?.role === 'admin' || user?.role === 'registrar' ? [
+      {
+        label: 'Admin Dashboard',
+        href: '/admin-dashboard',
+        icon: Settings
+      }
+    ] : []),
+    {
+      label: 'Profile',
+      href: '/profile',
+      icon: User
+    },
+    {
+      label: 'Settings',
+      href: '/settings',
+      icon: Settings
+    },
+    {
+      label: 'Logout',
+      href: '#',
+      icon: LogOut,
+      onClick: signOut,
+      className: "text-red-600 hover:bg-red-50"
+    }
+  ];
 
   return (
     <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
@@ -86,9 +113,9 @@ export default function Header() {
               </span>
             </Link>
             
-            {(user?.role === 'admin' || user?.role === 'registrar') && (
-              <Link href="/admin">
-                <span className={getNavLinkClass("/admin")}>
+            {user?.role === 'admin' && (
+              <Link href="/admin-dashboard">
+                <span className={getNavLinkClass("/admin-dashboard")}>
                   <Settings className="inline w-4 h-4 mr-2" />
                   Admin
                 </span>
@@ -113,43 +140,30 @@ export default function Header() {
             {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all duration-200">
-                  <Avatar className="w-10 h-10 ring-2 ring-gray-200 hover:ring-gov-blue transition-all duration-200">
-                    <AvatarImage src={user?.profileImageUrl || ""} alt="User avatar" />
-                    <AvatarFallback className="bg-gov-blue text-white font-semibold">
-                      {user?.firstName?.[0]}{user?.lastName?.[0]}
-                    </AvatarFallback>
+                <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback>{user?.firstName?.[0]}{user?.lastName?.[0]}</AvatarFallback>
                   </Avatar>
-                  <div className="hidden md:block text-left">
-                    <p className="text-sm font-semibold text-gray-900">
-                      {user?.firstName} {user?.lastName}
-                    </p>
-                    <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
-                  </div>
-                  <ChevronDown className="hidden md:block text-gray-400" size={16} />
-                </div>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <div className="px-3 py-2 border-b">
                   <p className="font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
                   <p className="text-sm text-gray-500">{user?.email}</p>
                 </div>
-                <DropdownMenuItem className="py-2">
-                  <User className="w-4 h-4 mr-2" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem className="py-2">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={() => window.location.href = "/api/logout"}
-                  className="text-red-600 py-2 hover:bg-red-50"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </DropdownMenuItem>
+                {userMenu.map((item) => (
+                  <DropdownMenuItem 
+                    key={item.label} 
+                    asChild
+                    className={`py-2 flex items-center space-x-2 ${item.className}`}
+                    onClick={item.onClick}
+                  >
+                    {item.icon && <item.icon className="w-4 h-4" />}
+                    <Link href={item.href} className="flex-1">
+                      {item.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -188,11 +202,11 @@ export default function Header() {
                       <span>Verify Certificate</span>
                     </Link>
                   </DropdownMenuItem>
-                  {(user?.role === 'admin' || user?.role === 'registrar') && (
+                  {user?.role === 'admin' && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center space-x-2 py-3">
+                        <Link href="/admin-dashboard" className="flex items-center space-x-2 py-3">
                           <Settings className="w-4 h-4" />
                           <span>Admin Panel</span>
                         </Link>

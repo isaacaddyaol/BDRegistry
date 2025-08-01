@@ -13,6 +13,7 @@ import {
   BarChart3, 
   Clock 
 } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface Stats {
   pendingApplications: number;
@@ -31,35 +32,67 @@ interface Application {
 
 export default function AdminDashboard() {
   const { toast } = useToast();
+  const { user, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  // Check for admin/registrar access
+  useEffect(() => {
+    if (!isLoading) {
+      console.log('Checking dashboard access for user role:', user?.role);
+      
+      // Only allow admin users and registrar@registry.gov.gh
+      if (!user || 
+          (user.role !== 'admin' && 
+           !(user.role === 'registrar' && user.email === 'registrar@registry.gov.gh'))) {
+        toast({
+          title: "Access Denied",
+          description: "You do not have permission to access the admin dashboard",
+          variant: "destructive",
+        });
+        setLocation("/");
+        return;
+      }
+    }
+  }, [isLoading, user, toast, setLocation]);
 
   const { data: stats, error: statsError } = useQuery<Stats>({
     queryKey: ["/api/statistics"],
     retry: false,
+    refetchOnWindowFocus: false
   });
 
   const { data: pendingApps, error: pendingError } = useQuery<Application[]>({
     queryKey: ["/api/pending-applications"],
     retry: false,
+    refetchOnWindowFocus: false
   });
 
+  // Handle API errors without causing re-renders
   useEffect(() => {
-    if (statsError) {
-      console.error('Stats error:', statsError);
-      toast({
-        title: "Error",
-        description: "Failed to load statistics. Please try again.",
-        variant: "destructive",
-      });
-    }
-    if (pendingError) {
-      console.error('Pending apps error:', pendingError);
-      toast({
-        title: "Error",
-        description: "Failed to load pending applications. Please try again.",
-        variant: "destructive",
-      });
+    if (statsError || pendingError) {
+      console.error('API Error:', statsError || pendingError);
+      const error = statsError || pendingError;
+      
+      if (error && isUnauthorizedError(error)) {
+        toast({
+          title: "Error",
+          description: "Failed to load data. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   }, [statsError, pendingError, toast]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gov-light flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gov-blue mx-auto mb-4"></div>
+          <p className="text-gov-gray">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gov-light">

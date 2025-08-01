@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Baby, Cross, Check, X, Eye } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Application {
   id: number;
@@ -24,6 +25,7 @@ interface PendingApplicationsProps {
 export default function PendingApplications({ applications }: PendingApplicationsProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, type, status, reviewNotes }: {
@@ -48,17 +50,6 @@ export default function PendingApplications({ applications }: PendingApplication
       queryClient.invalidateQueries({ queryKey: ["/api/statistics"] });
     },
     onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
       toast({
         title: "Error",
         description: "Failed to update application status",

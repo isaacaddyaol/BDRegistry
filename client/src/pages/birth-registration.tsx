@@ -22,20 +22,7 @@ export default function BirthRegistration() {
   const { isAuthenticated, isLoading } = useAuth();
   const queryClient = useQueryClient();
 
-  // Redirect to home if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  // No authentication required
 
   const form = useForm<z.infer<typeof birthFormSchema>>({
     resolver: zodResolver(birthFormSchema),
@@ -78,7 +65,7 @@ export default function BirthRegistration() {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.location.href = "/signin";
         }, 500);
         return;
       }

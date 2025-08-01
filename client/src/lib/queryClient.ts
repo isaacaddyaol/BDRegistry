@@ -2,8 +2,8 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    const error = new Error(`${res.status}: ${await res.text()}`);
+    throw error;
   }
 }
 
@@ -23,7 +23,8 @@ export async function apiRequest(
   return res;
 }
 
-type UnauthorizedBehavior = "returnNull" | "throw";
+export type UnauthorizedBehavior = "throw" | "returnNull";
+
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
@@ -46,9 +47,16 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      refetchOnWindowFocus: true,
+      staleTime: 30 * 1000, // 30 seconds
+      retry: (failureCount, error) => {
+        // Don't retry on 401 Unauthorized
+        if (error instanceof Error && error.message.startsWith('401:')) {
+          return false;
+        }
+        return failureCount < 2;
+      },
+      retryDelay: 1000,
     },
     mutations: {
       retry: false,
